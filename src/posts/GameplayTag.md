@@ -26,8 +26,8 @@ FGameplayTag 代表单个标签，FGameplayTagContainer 则可以存放一组标
 
 ## 查询方式
 
-精确匹配：HasTag(Tag)
-父标签匹配：HasTagExact 或直接使用 MatchesTag，只要包含父标签或其任意子标签都算匹配。
+精确匹配：HasTagExact(Tag) 或 MatchesTagExact(Tag)（必须完全相等才算匹配）
+父标签/包含匹配：HasTag(Tag)（默认 bExactMatch=false）或 MatchesTag(Tag)，只要容器内有该标签本身或其任意子标签都算匹配。
 
 ## 注册与来源
 

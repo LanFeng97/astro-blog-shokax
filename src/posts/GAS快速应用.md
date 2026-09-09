@@ -94,7 +94,7 @@ AttributeSet属性集 命名前缀为AS\_。如用于角色的属性集可以为
 
 ### 声明函数与变量
 
-在属性集中定义变量，例如在继承自UAttributeSet的AS_Character中。由如下代码方式定义，可以通过UPERPERTY对其添加说明符。在定义后需要对变量使用ATTRIBUTE_AXCESSORS宏进行初始化
+在属性集中定义变量，例如在继承自UAttributeSet的AS_Character中。由如下代码方式定义，可以通过UPROPERTY对其添加说明符。定义后需要用ATTRIBUTE_ACCESSORS宏为每个属性生成访问器（getter/setter）
 
 ```cpp
  UCLASS()
@@ -240,18 +240,18 @@ class REFORGE_API UAS_Character : public UAttributeSet
 
 	// 网络同步函数
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	//virtual是定义虚函数，在ue蓝图中，可以在父类中写一个空函数（也可以非空）。而在其子类中，可以对那个该函数进行函数重载（重写），去进行具体实现，c++中就是使用override对父类的函数进行重载。
+	//virtual是定义虚函数，在ue蓝图中，可以在父类中写一个空函数（也可以非空）。在其子类中可以对那个函数进行重写（override）去实现具体逻辑，C++中用 override 标明对父类虚函数的覆盖；注意“重写/覆盖(override)”与“重载(overload)”是两个不同概念。
 	//比如可以在父类中定义了“吃”这个行为的函数。但是具体的子类狗吃什么猫吃什么，也可以到具体的子类中由他们自己去重写实现。
-	//const是常量函数，在ue中，const修饰的函数，默认作为纯函数暴露给蓝图，且不能被修改。
+	//const 是 C++ 层面的只读限制（const 成员函数不能修改成员变量）；函数是否暴露给蓝图由 BlueprintCallable/BlueprintPure 等说明符决定，并不是加 const 就会自动变成蓝图纯函数。
 
 
 	//定义OnRep函数
 	//定义OnRep_HP函数
 	UFUNCTION()
-    void OnRep_HP(const FGameplayAttributeData& OldHP)
+    void OnRep_HP(const FGameplayAttributeData& OldHP);
 
 	UFUNCTION()
-	void OnRep_MAXHP(const FGameplayAttributeData& OldMAXHP)
+	void OnRep_MAXHP(const FGameplayAttributeData& OldMAXHP);
 };
 ```
 
@@ -298,10 +298,10 @@ class REFORGE_API UAS_Character : public UAttributeSet
 	//定义OnRep函数
 	//定义OnRep_HP函数
 	UFUNCTION()
-    void OnRep_HP(const FGameplayAttributeData& OldHP)
+    void OnRep_HP(const FGameplayAttributeData& OldHP);
 
 	UFUNCTION()
-	void OnRep_MAXHP(const FGameplayAttributeData& OldMAXHP)
+	void OnRep_MAXHP(const FGameplayAttributeData& OldMAXHP);
 
 };
 ```
@@ -317,8 +317,8 @@ void UAS_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	//Super是指调用父类的函数
 
-	DOREPLIFETIME_CONDITION_NOTIFY(UAS_Character, HP, COND_OwnerOnly, REPNOTIFY_OnRep_HP);
-	DOREPLIFETIME_CONDITION_NOTIFY(UAS_Character, MAXHP, COND_OwnerOnly, REPNOTIFY_OnRep_MAXHP);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAS_Character, HP, COND_None, REPNOTIFY_OnRep_HP); //COND_None：同步给所有客户端（例如其他玩家也能看到你的HP）；若只想同步给拥有者本人，可改回 COND_OwnerOnly
+	DOREPLIFETIME_CONDITION_NOTIFY(UAS_Character, MAXHP, COND_None, REPNOTIFY_OnRep_MAXHP); //同上，MAXHP 也同步给所有客户端
 
 	//完成复制需要的属性
 }

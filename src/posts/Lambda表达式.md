@@ -28,7 +28,7 @@ int main(void)
     auto p = [x,&y](int a,int b)->float{
         y =5.0;
         return x+y+a+b;
-    }
+    };
     cout<<p(2,3);//输出20
 }
 ```
@@ -39,7 +39,7 @@ int main(void)
 #include <iostream>
 #include <vector>
 #include <algorithm>
-using namespace std
+using namespace std;
 
 int main() {
     vector<int> scores = {50, 30, 80, 10, 90};
@@ -50,7 +50,7 @@ int main() {
     });
 
     for (int v : scores) {
-        :cout << v << " ";  //输出：90 80 50 30 10
+        cout << v << " ";  //输出：90 80 50 30 10
     }
     return 0;
 }
@@ -87,7 +87,7 @@ i = 4
 
 ## 值捕获与引用捕获
 
-在案例下面中，[x，&y]对x和y的值进行了捕获。
+在案例下面中，[x,&y]对 x 进行值捕获、对 y 进行引用捕获。
 
 ```cpp
 int main(void)
@@ -97,7 +97,7 @@ int main(void)
     auto p = [x,&y](int a,int b)->float{
         y =5.0;
         return x+y+a+b;
-    }
+    };
     cout<<p(2,3);//输出20
 }
 ```
@@ -226,14 +226,14 @@ std::cout << "外部 a, b: " << a << ", " << b << std::endl; //100, 200
 
 # c++20的补充
 
-c++20之前在类成员函数中写 [=] 会隐式捕获 this 指针（导致按引用捕获当前对象，即使你以为是按值）。C++20 开始，[=] 不再隐式捕获 this，如果你需要访问成员变量，必须显式写 [=, this] 或 [&, this]。
+c++20之前在类成员函数中写 [=] 会隐式捕获 this 指针（导致按引用捕获当前对象，即使你以为是按值）。C++20 起，[=] 隐式捕获 this 被标记为 deprecated：仍然会捕获、也仍能编译，但会产生弃用警告，推荐显式写 [=, this] 或 [&, this] 以消除歧义。
 
 ```cpp
 class MyClass {
     int value = 10;
 public:
     void test() {
-        //C++20 之前合法，C++20起编译报错（访问value需要this）
+        //C++20 之前合法；C++20 起仅被标记为 deprecated（仍可编译，但有弃用警告）
         //auto bad = [=] { return value; };
 
         //C++20 正确写法：显式指明捕获 this
