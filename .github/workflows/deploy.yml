@@ -1,7 +1,7 @@
 name: Deploy to GitHub Pages
 
 on:
-  # 每次推送到 main 分支时构建并发布到 Smartre97.github.io（用户站点仓库）
+  # 每次推送到 main 分支时构建并发布到 LanFeng97.github.io（用户站点仓库）
   # 若分支名不同，请同步修改 branches
   push:
     branches: [main]
@@ -13,7 +13,7 @@ permissions:
 
 # 同一时刻只允许一个发布任务，避免新旧构建互相覆盖
 concurrency:
-  group: deploy-smartre97-github-io
+  group: deploy-lanfeng97-github-io
   cancel-in-progress: false
 
 jobs:
@@ -41,15 +41,15 @@ jobs:
       - name: Build site
         run: pnpm run build
 
-      # 把 dist 推送到 Smartre97/Smartre97.github.io 的 main 分支，
-      # 使 https://smartre97.github.io/ 展示本仓库（Astro 新博客）的内容。
-      # 需要先在仓库 Secrets 配置 SMARTRE97_GITHUB_IO_TOKEN：
-      #   一个有 Smartre97/Smartre97.github.io 仓库写权限的 PAT（scope: repo）。
-      - name: Deploy to Smartre97.github.io
+      # 把 dist 推送到 LanFeng97/LanFeng97.github.io 的 main 分支，
+      # 使 https://lanfeng97.github.io/ 展示本仓库（Astro 新博客）的内容。
+      # 需要先在仓库 Secrets 配置 LANFENG97_GITHUB_IO_TOKEN：
+      #   一个有 LanFeng97/LanFeng97.github.io 仓库写权限的 PAT（scope: repo）。
+      - name: Deploy to LanFeng97.github.io
         uses: peaceiris/actions-gh-pages@v4
         with:
-          personal_token: ${{ secrets.SMARTRE97_GITHUB_IO_TOKEN }}
-          external_repository: Smartre97/Smartre97.github.io
+          personal_token: ${{ secrets.LANFENG97_GITHUB_IO_TOKEN }}
+          external_repository: LanFeng97/LanFeng97.github.io
           publish_branch: main
           publish_dir: ./dist
           force_orphan: false
