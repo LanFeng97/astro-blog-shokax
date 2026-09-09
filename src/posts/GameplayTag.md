@@ -1,11 +1,12 @@
 ---
 title: GameplayTag
 date: 2026-08-14 16:01:55
-categories:  [UE]
-tags: [UE基础,UE,GameplayTag]
+categories: [UE]
+tags: [UE基础, UE, GameplayTag]
 ---
 
 # 一、它是什么
+
 虚幻引擎的 GameplayTag 是一套层级化的（多叉树）、基于字符串的标签系统，用于在运行时给任意对象（Actor、组件、技能、UI 等）动态打上“标签”，并借此进行快速的状态判断、逻辑分流和数据驱动设计。它本质上是一个 FGameplayTag 结构体，内部将形如 Status.Debuff.Stun 的点分字符串，转化为高效的节点索引，通过 UGameplayTagManager 统一管理。
 
 通常需要提前根据游戏需要设计相关标签系统
@@ -18,11 +19,13 @@ UI显示
 动画和音效
 
 ## 核心结构
+
 FGameplayTag 代表单个标签，FGameplayTagContainer 则可以存放一组标签。
 
 层级化：点分隔的命名形成父子关系，Status.Debuff 是 Status.Debuff.Stun 的父标签。
 
 ## 查询方式
+
 精确匹配：HasTag(Tag)
 父标签匹配：HasTagExact 或直接使用 MatchesTag，只要包含父标签或其任意子标签都算匹配。
 
@@ -32,6 +35,7 @@ FGameplayTag 代表单个标签，FGameplayTagContainer 则可以存放一组标
 可以在 Edit - Project Settings - Project - GameplayTags 中看到并添加入列表
 
 # 二、主要作用
+
 状态与类型标记
 给角色挂上 State.Dead、Status.Debuff.Poison、Team.Red 等标签，逻辑层直接问“是否有这个标签”来决定行为，避免硬编码 bool 或 enum 的大杂烩。
 
@@ -57,6 +61,7 @@ UI 与物品系统
 标签容器可以高效复制，标记诸如“已交互”“任务阶段”等状态，比同步大量布尔值更干净。
 
 # 三、优势
+
 高度灵活，无需修改代码
 策划或设计师在配置中新增一个标签并声明，即可驱动新逻辑，无需重新编译 C++ 甚至蓝图基底。
 
@@ -111,7 +116,6 @@ UI 框架（Common UI、UMG）：用标签切换界面状态、筛选数据。
 物理与碰撞：通过标签而非ObjectType/Channel的方式动态标记可交互物。
 
 DataTable / DataRegistry：数据驱动的标签来源与配置。
-
 
 # 六、与其他方案的对比（何时更好用，何时更不好用）
 

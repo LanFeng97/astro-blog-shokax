@@ -2,15 +2,19 @@
 title: mutable关键字
 date: 2026-08-21 15:32:05
 categories: [c++]
-tags: [c++,c++11]
+tags: [c++]
 ---
+
 # 作用
+
 mutable用于突破const的限制。使用后可以在const函数或者const对象中修改成员变量。通常用于缓存、延迟计算、日志记录等场景。被mutable修饰的变量将在生命周期内逻辑上可变，物理上可写。
 
 # 注意
+
 mutable不用用于修饰static成员变量。因为 static 不属于对象实例，不受 const 对象限制，也不能用于修饰 const 成员变量（本身已不可变）和引用成员（引用不可重新绑定）。它只能修饰非静态、非引用、非常量的数据成员。
 
 # 使用场景
+
 在const成员函数中修改变量
 
 缓存与延迟计算（mutable T cache，配合 mutable bool is_dirty）。
@@ -22,7 +26,9 @@ mutable不用用于修饰static成员变量。因为 static 不属于对象实�
 Lambda 表达式：标记为mutable时，允许修改按值捕获的副本。去掉 operator() 的 const 限定，允许修改按值捕获的副本。如果 Lambda 使用 [&] 按引用捕获，即使不加 mutable 也能修改外部变量；只有 [=] 按值捕获时，才需要 mutable 来修改副本（且不影响原外部变量）
 
 # 使用案例
+
 ## const成员函数修改变量
+
 ```cpp
     class num {
     private:
@@ -48,8 +54,11 @@ Lambda 表达式：标记为mutable时，允许修改按值捕获的副本。去
         int cnt = obj.get_count(); //cnt == 2
     }
 ```
+
 ## 缓存与延迟计算（mutable T cache + mutable bool dirty）
+
 用于昂贵的计算，如复杂数学运算、数据库查询。第一次调用时计算结果并缓存，后续直接返回缓存值。注意：修改缓存不影响对象的“逻辑常量性”（即外部看起来对象状态未变）。
+
 ```cpp
 class圆形面积计算器 {
 private:
@@ -86,7 +95,9 @@ void test_cache() {
     double area2 = circle.get_area(); //第二次，直接返回缓存，性能极高
 }
 ```
+
 ## 多线程同步mutable std::mutex，在const读函数中加锁
+
 为什么需要mutable互斥锁：互斥锁本身是一个需要被修改的对象（加锁/解锁会改变其内部状态，如持有者线程ID和等待队列）。在const成员函数中，对象被视为“只读”，但为了线程安全地读取数据，我们必须对共享数据进行加锁保护。将互斥锁声明为mutable，允许const函数修改锁的状态，同时保证了对象的逻辑常量性（读取操作不改变业务数据）。
 
 若不加锁，多线程同时调用get_value()会造成数据竞争（Data Race），导致未定义行为（读到的可能是损坏的中间值）。
@@ -94,6 +105,7 @@ void test_cache() {
 std::lock_guard是RAII（资源获取即初始化）锁，构造时自动锁定mtx，析构时自动解锁。即使函数中途抛出异常，锁也能安全释放，避免死锁。
 
 注意：mutable只作用于互斥锁本身，不作用于data。data仍然受到保护，且未被修改。
+
 ```cpp
 #include <mutex>
 
@@ -125,8 +137,11 @@ void test_mutex() {
     //可同时创建多个线程，安全调用config.get_value()，不会出现数据竞争
 }
 ```
+
 ## 调试与日志计数
+
 此场景不影响任何业务逻辑输出，纯粹用于统计或日志。修改计数器不影响对象的“值”。
+
 ```cpp
 class用户认证器 {
 private:
@@ -163,8 +178,11 @@ void test_debug() {
     size_t count = auth.get_debug_count(); //count == 2，业务逻辑完全不受影响
 }
 ```
+
 ## Lambda表达式，mutable修改按值捕获的副本
+
 Lambda表达式默认生成的operator()是const限定的。不加mutable时，按值捕获的变量是只读的；加mutable后，去掉const限定，允许修改副本，且不影响外部原始变量。按引用捕获则天然可以修改外部变量，无需mutable。
+
 ```cpp
 #include <iostream>
 
