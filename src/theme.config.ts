@@ -3,7 +3,7 @@ import { defineConfig } from "./toolkit/themeConfig";
 
 export default defineConfig({
 //网站默认语言
-  siteName: "My Blog",//左上角标题栏名字
+  siteName: "Blog",//左上角标题栏名字
   locale: "zh-CN",   // zh-CN | zh-TW | ja | en
 
 //首页大标题
