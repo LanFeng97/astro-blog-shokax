@@ -23,6 +23,7 @@ export default defineConfig({
         url: "https://github.com/LanFeng97",
         icon: "i-ri-github-fill",
       },
+      /*
       twitter: {
         url: "https://twitter.com/yourname",
         icon: "i-ri-twitter-x-line",
@@ -31,6 +32,7 @@ export default defineConfig({
         url: "mailto:your@email.com",
         icon: "i-ri-mail-line",
       },
+      */
     },
   },
 
