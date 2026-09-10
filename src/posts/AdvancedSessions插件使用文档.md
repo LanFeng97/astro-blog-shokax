@@ -1,4 +1,10 @@
-# Advanced Sessions Plugin / Advanced Steam Sessions 使用文档（中文版）
+---
+title: Advanced Sessions Plugin使用文档
+date: 2026-09-10 15:19:50
+categories: [UE]
+tags: [UE,客户端网络开发]
+---
+# Advanced Sessions Plugin使用文档
 
 > 本文件以https://github.com/LanFeng97/Chinese-AdvancedSessionsPlugin仓库 UE 5.8 上游签名（当前 `master` 分支）为准；中文汉化分支的蓝图节点显示名采用“中文 (English)”双语形式，可直接用中文或英文搜索。不同 UE 版本分支的部分参数存在增删，遇到差异时以对应分支 README 和节点为准。
 
