@@ -192,6 +192,8 @@ TArray<FSessionsSearchSetting> Filters = { Filter };
 
 ### 4.2 核心会话流程
 
+> 说明：本插件中带 `WorldContext="WorldContextObject"` 元数据的节点（例如 `Create Advanced Session`、`Find Sessions Advanced`）在蓝图里不显示 `World Context Object` 引脚，蓝图会按当前蓝图自动确定世界上下文。该参数只在纯 C++ 调用时需要传入，例如 `GetWorld()` 或 `GetGameInstance()`。
+
 #### 创建高级会话 `Create Advanced Session`
 
 蓝图节点对应函数：
@@ -220,7 +222,6 @@ CreateAdvancedSession(
 
 | 引脚 | 推荐值 | 说明 |
 |---|---|---|
-| `World Context Object` | `Get Game Instance` 或 `Self` | 5.x 多数节点带此引脚 |
 | `Player Controller` | `Get Player Controller 0` | 非专用服务器需要有效本地玩家 |
 | `Extra Settings` | 空数组或自定义属性数组 | 房间自定义键值对 |
 | `Public Connections` | 4 | Listen Server 自身占 1 |
@@ -769,7 +770,7 @@ C++ 中在子类里重写这些 `BlueprintImplementableEvent` 时，使用原生
 4. 专用服务器创建时应设置 `bIsDedicatedServer=true`，且不依赖 Presence。
 5. Steam 功能仅在使用 Steam 在线子系统时可用；正式发布必须替换 `SteamDevAppId`。
 6. `End Session` 是旧接口，大多数销毁场景应使用引擎自带 `Destroy Session`。
-7. 5.x 节点普遍带 `World Context Object` 引脚，通常连接 `Get Game Instance` 或 `Self`。
+7. 5.x 节点在 C++ 签名中普遍带有 `WorldContextObject` 参数，但蓝图节点通常不显示 `World Context Object` 引脚；只有纯 C++ 调用时需要传入 `GetWorld()` 或 `GetGameInstance()`。
 8. C++ 异步代理对象必须持有到回调结束；回调成功后清空 `UPROPERTY` 引用即可。
 
 ---
@@ -842,8 +843,8 @@ C++ 中在子类里重写这些 `BlueprintImplementableEvent` 时，使用原生
 | 顺序 | 节点 | 连接与设置 |
 |---|---|---|
 | 1 | `Get Player Controller` | `Player Index = 0` |
-| 2 | `Create Advanced Session` | `World Context Object` 接 `Get Game Instance`；`Player Controller` 接步骤 1；`Public Connections = 4`；`Private Connections = 0`；`Use LAN = true`；`Allow Invites = true`；`Is Dedicated Server = false`；`Use Lobbies If Available = false`；`Allow Join Via Presence = true`；`Allow Join Via Presence Friends Only = false`；`Should Advertise = true`；`Start After Create = true`；其余保持默认 |
-| 3 | `Server Travel` | 连接 `Create Advanced Session` 的 `On Success`；`World Context Object` 接 `Get Game Instance`；`In URL = GameMap?listen`；`bAbsolute = false`；`bShouldSkipGameNotify = false` |
+| 2 | `Create Advanced Session` | `Player Controller` 接步骤 1；`Public Connections = 4`；`Private Connections = 0`；`Use LAN = true`；`Allow Invites = true`；`Is Dedicated Server = false`；`Use Lobbies If Available = false`；`Allow Join Via Presence = true`；`Allow Join Via Presence Friends Only = false`；`Should Advertise = true`；`Start After Create = true`；其余保持默认 |
+| 3 | `Server Travel` | 连接 `Create Advanced Session` 的 `On Success`；`In URL = GameMap?listen`；`bAbsolute = false`；`bShouldSkipGameNotify = false` |
 | 4 | `Print String` | 连接 `Create Advanced Session` 的 `On Failure`，输出“创建失败” |
 
 说明：主机创建会话成功后，`ServerTravel` 以 `?listen` 方式进入 `GameMap`，此时该进程成为 Listen Server，客户端即可搜索到该房间。
@@ -855,9 +856,9 @@ C++ 中在子类里重写这些 `BlueprintImplementableEvent` 时，使用原生
 | 顺序 | 节点 | 连接与设置 |
 |---|---|---|
 | 1 | `Get Player Controller` | `Player Index = 0` |
-| 2 | `Find Sessions Advanced` | `World Context Object` 接 `Get Game Instance`；`Player Controller` 接步骤 1；`Max Results = 20`；`Use LAN = true`；`Server Type To Search = All Servers`；`Filters` 留空；`Min Slots Available = 1`；其余保持默认 |
+| 2 | `Find Sessions Advanced` | `Player Controller` 接步骤 1；`Max Results = 20`；`Use LAN = true`；`Server Type To Search = All Servers`；`Filters` 留空；`Min Slots Available = 1`；其余保持默认 |
 | 3 | `Get`（数组取元素） | 连接 `Find Sessions Advanced` 的 `On Success`，把返回的 `Results` 数组连接到 `Get` 的数组引脚，`Index = 0` |
-| 4 | `Join Session`（引擎自带） | `World Context Object` 接 `Get Game Instance`；`Player Controller` 接步骤 1；`Search Result` 接步骤 3 的输出 |
+| 4 | `Join Session`（引擎自带） | `Player Controller` 接步骤 1；`Search Result` 接步骤 3 的输出 |
 | 5 | `Print String` | 连接 `Join Session` 的 `On Success` 输出“加入成功”；连接 `On Failure` 输出“加入失败” |
 
 说明：`Join Session` 成功后会执行平台跳转。若搜索结果为空，`Get` 节点会返回无效对象，`Join Session` 会走失败分支；生产项目中应先判断 `Results` 数组长度。
@@ -1182,4 +1183,6 @@ EditorStartupMap=/Game/Maps/MenuMap
 4. 观察两个实例是否进入同一地图；`GameMode=1` 过滤条件会同时验证自定义属性与搜索过滤。
 
 ---
+
+
 
