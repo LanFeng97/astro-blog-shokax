@@ -8,7 +8,7 @@ tags: [UE, Lua]
 # UnLua使用教程（UE5.8快速上手版）
 
 > 这篇教程写给**以蓝图为主、只了解一点C++基础**的开发者。目标不是讲原理，而是照着步骤把Lua跑起来，并学会蓝图、C++、UnLua三者混合使用。
-> 配套仓库：[Smartre97/UnLua-For-UE5.8](https://github.com/Smartre97/UnLua-For-UE5.8)
+> 配套仓库：[LanFeng97/UnLua-For-UE5.8](https://github.com/LanFeng97/UnLua-For-UE5.8)
 
 ## 一、开始之前你需要知道的三件事
 
@@ -20,7 +20,7 @@ tags: [UE, Lua]
 
 ## 二、安装插件
 
-1. 由于本文写作时间官方Unlua只更新到了5.6的支持，而5.8版本由于api更新导致无法使用，我用ai做了5.8的适配：[Smartre97/UnLua-For-UE5.8](https://github.com/Smartre97/UnLua-For-UE5.8)。
+1. 由于本文写作时间官方Unlua只更新到了5.6的支持，而5.8版本由于api更新导致无法使用，我用ai做了5.8的适配：[LanFeng97/UnLua-For-UE5.8](https://github.com/LanFeng97/UnLua-For-UE5.8)。
 2. 拉取`5.8breach`分支（或Tag`UE5.8_V1.0`）。
 3. 把下载下来的`Plugins`里的`UnLua`和`UnLuaExtensions`两个文件夹，复制到你工程的`Plugins`目录下。
 4. 重新启动UE编辑器，等待插件编译完成。
